@@ -2,7 +2,7 @@ return {
     {
         "CopilotC-Nvim/CopilotChat.nvim",
         dependencies = {
-            { "github/copilot.vim" }, -- or zbirenbaum/copilot.lua
+            { "zbirenbaum/copilot.lua" }, -- or zbirenbaum/copilot.lua
             { "nvim-lua/plenary.nvim", branch = "master" }, -- for curl, log and async functions
         },
         build = "make tiktoken", -- Only on MacOS or Linux
@@ -14,9 +14,13 @@ return {
                 title = "dahole",
             },
 
+            highlight_headers = false,
+            error_header = "> [!ERROR] Error",
+            separator = "---",
+
             auto_follow_cursor = false,
             auto_insert_mode = false,
-            chat_autocomplete = true,
+            chat_autocomplete = false,
             question_header = "# batman ",
             answer_header = "# robin ",
 
@@ -27,7 +31,7 @@ return {
                 },
             },
             contexts = {
-                buffers = { "listed" },
+                buffer = { "listed" },
             },
         },
         -- See Commands section for default commands if you want to lazy load on them
