@@ -1,5 +1,3 @@
-local set = vim.opt_local
-
-set.shiftwidth = 2
-set.number = true
-set.relativenumber = true
+vim.opt_local.shiftwidth = 2
+vim.opt_local.tabstop = 2
+vim.opt_local.softtabstop = 2
