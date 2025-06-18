@@ -12,70 +12,57 @@ return {
             local dap = require("dap")
             local ui = require("dapui")
 
-            require("dapui").setup()
-            require("dap-go").setup()
+            -- Define the PHP debug adapter
+            -- This tells nvim-dap how to communicate with the php-debug-adapter
+            dap.adapters.php = {
+                type = "executable",
+                command = "php-debug-adapter",
+                name = "PHP Debug Adapter (Xdebug)",
+            }
 
-            require("nvim-dap-virtual-text").setup({
-                -- This just tries to mitigate the chance that I leak tokens here. Probably won't stop it from happening...
-                display_callback = function(variable)
-                    local name = string.lower(variable.name)
-                    local value = string.lower(variable.value)
-                    if name:match("secret") or name:match("api") or value:match("secret") or value:match("api") then
-                        return "*****"
-                    end
-
-                    if #variable.value > 15 then
-                        return " " .. string.sub(variable.value, 1, 15) .. "... "
-                    end
-
-                    return " " .. variable.value
-                end,
-            })
-
-            -- Handled by nvim-dap-go
-            -- dap.adapters.go = {
-            --   type = "server",
-            --   port = "${port}",
-            --   executable = {
-            --     command = "dlv",
-            --   },
-            -- }
-
-            local elixir_ls_debugger = vim.fn.exepath("elixir-ls-debugger")
-            if elixir_ls_debugger ~= "" then
-                dap.adapters.mix_task = {
-                    type = "executable",
-                    command = elixir_ls_debugger,
-                }
-
-                dap.configurations.elixir = {
-                    {
-                        type = "mix_task",
-                        name = "phoenix server",
-                        task = "phx.server",
-                        request = "launch",
-                        projectDir = "${workspaceFolder}",
-                        exitAfterTaskReturns = false,
-                        debugAutoInterpretAllModules = false,
+            -- Define PHP launch configurations
+            -- These are the "profiles" you can choose when starting a debug session
+            dap.configurations.php = {
+                {
+                    type = "php",
+                    request = "launch",
+                    name = "Listen for Xdebug",
+                    port = 9003,
+                    breakOnException = true,
+                    breakOnError = true,
+                    pathMappings = {
+                        ["/opt/"] = "${workspaceFolder}",
                     },
-                }
-            end
+                },
+                {
+                    type = "php",
+                    request = "launch",
+                    name = "Launch current script (Xdebug)",
+                    program = "${file}",
+                    cwd = "${workspaceFolder}",
+                    port = 9003,
+                    breakOnException = true,
+                    breakOnError = true,
+                    pathMappings = {
+                        ["/opt/"] = "${workspaceFolder}",
+                    },
+                },
+            }
 
             vim.keymap.set("n", "<space>b", dap.toggle_breakpoint)
             vim.keymap.set("n", "<space>gb", dap.run_to_cursor)
 
             -- Eval var under cursor
-            vim.keymap.set("n", "<space>?", function()
-                require("dapui").eval(nil, { enter = true })
+            vim.keymap.set("n", "<F9>", function()
+                require("dapui").eval(nil, { enter = true, context = "hover" })
             end)
 
-            vim.keymap.set("n", "<F1>", dap.pause)
-            vim.keymap.set("n", "<F2>", dap.step_into)
-            vim.keymap.set("n", "<F3>", dap.step_over)
-            vim.keymap.set("n", "<F4>", dap.step_out)
-            vim.keymap.set("n", "<F5>", dap.step_back)
-            vim.keymap.set("n", "<F6>", dap.continue)
-            vim.keymap.set("n", "<F7>", dap.stop)
+            vim.keymap.set("n", "<F4>", dap.continue)
+            vim.keymap.set("n", "<F5>", dap.step_over)
+            vim.keymap.set("n", "<F6>", dap.step_into)
+            vim.keymap.set("n", "<F7>", dap.step_out)
+            vim.keymap.set("n", "<F8>", dap.step_back)
+            vim.keymap.set("n", "<F9>", dap.stop)
 
             dap.listeners.before.attach.dapui_config = function()
                 ui.open()
@@ -90,6 +77,19 @@ return {
                 ui.close()
             end
             dap.defaults.fallback.exception_breakpoints = { "raised", "uncaught" }
+        end,
+    },
+    {
+        "jay-babu/mason-nvim-dap.nvim",
+        -- This opts function will be merged with the existing opts for mason-nvim-dap
+        opts = function(_, opts)
+            -- Ensure that the 'php-debug-adapter' is added to the list of adapters to be installed
+            opts.ensure_installed = opts.ensure_installed or {}
+            if not vim.tbl_contains(opts.ensure_installed, "php-debug-adapter") then
+                table.insert(opts.ensure_installed, "php-debug-adapter")
+            end
+            -- You could also set up automatic installation for other adapters here
+            -- Example: table.insert(opts.ensure_installed, "js-debug-adapter")
         end,
     },
 }
