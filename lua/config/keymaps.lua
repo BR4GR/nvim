@@ -2,7 +2,8 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
-vim.keymap.set({ "n", "i", "v", "c" }, "fj", "<Esc>", { desc = "Map Caps Lock to Escape" })
+vim.keymap.set({ "n", "i", "v", "c" }, "fj", "<Esc>")
+vim.keymap.set({ "n", "i", "v", "c" }, "jf", "<Esc>")
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
