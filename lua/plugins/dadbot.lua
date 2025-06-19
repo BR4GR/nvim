@@ -40,10 +40,10 @@ local function parse_ascii_table_to_json_and_copy()
     end
 
     -- Encode to JSON
-    local json_str = vim.fn.json_encode(data)
+    local json_string = vim.fn.json_encode(data)
 
     -- Copy to clipboard
-    vim.fn.setreg("+", data)
+    vim.fn.setreg("+", json_string)
     print("Copied JSON to clipboard")
 end
 

@@ -50,7 +50,7 @@ return {
         opts = {
             linters_by_ft = {
                 php = { "phpcs" },
-                -- html = { "htmlhint" },
+                html = { "htmlhint" },
             },
             linters = {
                 phpcs = {

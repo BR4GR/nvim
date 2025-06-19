@@ -20,6 +20,19 @@ return {
                         ratio = 0.3,
                     },
                 },
+                suggestion = {
+                    enabled = true,
+                    auto_trigger = false,
+                    keymap = {
+                        accept = "<M-l>",
+                        accept_word = false,
+                        accept_line = false,
+                        next = "<M-]>",
+                        prev = "<M-[>",
+                        dismiss = "<C-x>",
+                        trigger = "<leader>ac",
+                    },
+                },
                 copilot_model = "claude-sonnet-4",
             })
         end,
